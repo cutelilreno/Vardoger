@@ -14,15 +14,18 @@ public class Group {
     private final long requiredDuration;
     private final List<String> onComplete;
     private final Map<String, Location> signs;
+    private final Map<String, List<String>> signCommands;
 
-    public Group(String name, long requiredDuration, List<String> onComplete, Map<String, Location> signs) {
+    public Group(String name, long requiredDuration, List<String> onComplete, Map<String, Location> signs, Map<String, List<String>> signCommands) {
         this.name = name;
         this.requiredDuration = requiredDuration;
         this.onComplete = onComplete;
         this.signs = signs;
+        this.signCommands = signCommands;
     }
     public String getName() { return name; }
     public long getRequiredDuration() { return requiredDuration; }
     public List<String> getOnComplete() { return onComplete; }
     public Map<String, Location> getSigns() { return signs; }
+    public Map<String, List<String>> getSignCommands() { return signCommands; }
 }

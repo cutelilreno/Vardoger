@@ -32,6 +32,7 @@ public class GroupManager {
             List<String> commands = sec.getStringList("onComplete");
             ConfigurationSection signsSec = sec.getConfigurationSection("signs");
             Map<String, Location> signs = new HashMap<>();
+            Map<String, List<String>> signCommands = new HashMap<>();
             for (String id : signsSec.getKeys(false)) {
                 ConfigurationSection s = signsSec.getConfigurationSection(id);
                 Location loc = new Location(
@@ -39,10 +40,14 @@ public class GroupManager {
                         s.getInt("x"), s.getInt("y"), s.getInt("z")
                 );
                 signs.put(id, loc);
+                if (s.contains("onComplete")) {
+                    signCommands.put(id, s.getStringList("onComplete"));
+                }
             }
-            groups.put(name, new Group(name, duration, commands, signs));
+            groups.put(name, new Group(name, duration, commands, signs, signCommands));
         }
     }
+
     public Group getGroup(String name) { return groups.get(name); }
     public Map<String, Group> getGroups() { return groups; }
 
@@ -55,7 +60,7 @@ public class GroupManager {
         yc.getConfigurationSection(name).createSection("signs");
         yc.save(gf);
         
-        groups.put(name, new Group(name, 5, Collections.emptyList(), new HashMap<>()));
+        groups.put(name, new Group(name, 5, Collections.emptyList(), new HashMap<>(), new HashMap<>()));
     }
 
     public void addSign(String groupName, String signId, Location location) throws IOException {
@@ -90,6 +95,7 @@ public class GroupManager {
             List<String> commands = sec.getStringList("onComplete");
             ConfigurationSection signsSec = sec.getConfigurationSection("signs");
             Map<String, Location> signs = new HashMap<>();
+            Map<String, List<String>> signCommands = new HashMap<>();
             for (String id : signsSec.getKeys(false)) {
                 ConfigurationSection s = signsSec.getConfigurationSection(id);
                 Location loc = new Location(
@@ -97,8 +103,11 @@ public class GroupManager {
                         s.getInt("x"), s.getInt("y"), s.getInt("z")
                 );
                 signs.put(id, loc);
+                if (s.contains("onComplete")) {
+                    signCommands.put(id, s.getStringList("onComplete"));
+                }
             }
-            groups.put(name, new Group(name, duration, commands, signs));
+            groups.put(name, new Group(name, duration, commands, signs, signCommands));
         }
     }
 }

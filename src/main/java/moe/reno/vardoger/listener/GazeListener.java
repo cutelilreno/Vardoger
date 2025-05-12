@@ -23,6 +23,7 @@ import org.bukkit.util.RayTraceResult;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -150,7 +151,9 @@ public class GazeListener implements Listener {
 
                 if (current >= required && !signStates.getOrDefault(id, false)) {
                     signStates.put(id, true);
+                    runCommands(group.getSignCommands().getOrDefault(id, List.of()), player);
                     //player.sendMessage(String.format("§7[Debug] Completed sign %s!", id));
+                    //player.sendMessage("[Debug]: Sign " + id + " has " + current + " ticks (req: " + required + "), done: " + signStates.getOrDefault(id, false));
                 }
 
                 //player.sendMessage(String.format("§7[Debug] Sign %s progress: %d/%d ticks (completed: %s)",
@@ -162,12 +165,7 @@ public class GazeListener implements Listener {
                     
             if (allDone && !prog.completedGroups.getOrDefault(groupName, false)) {
                 //player.sendMessage("§7[Debug] Completed group " + groupName);
-                group.getOnComplete().forEach(cmd ->
-                    Bukkit.dispatchCommand(
-                        Bukkit.getConsoleSender(),
-                        cmd.replace("{player}", player.getName())
-                    )
-                );
+                runCommands(group.getOnComplete(), player);
                 prog.completedGroups.put(groupName, true);
             }
 
@@ -227,6 +225,15 @@ public class GazeListener implements Listener {
             loc.getBlockX() + ":" +
             loc.getBlockY() + ":" +
             loc.getBlockZ();
+    }
+
+    private void runCommands(List<String> commands, Player player) {
+        commands.forEach(cmd ->
+            Bukkit.dispatchCommand(
+                Bukkit.getConsoleSender(),
+                cmd.replace("{player}", player.getName())
+            )
+        );
     }
 
 }
