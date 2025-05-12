@@ -162,17 +162,17 @@ public class GazeListener implements Listener {
             // check if completed the group
             String groupName = prog.currentGroup;
             Group group = gm.getGroup(groupName);
-            long required = group.getRequiredDuration();
+            long required = group.requiredDuration();
             
             Map<String, Boolean> signStates = prog.completedSigns
                         .computeIfAbsent(groupName, k -> new HashMap<>());
 
-            if (group.getSpyThreshold() > 0.0) {
+            if (group.spyThreshold() > 0.0) {
                 double percentCompleted = signStates.values().stream()
                     .filter(Boolean::booleanValue)
-                    .count() / (double) group.getSigns().size();
+                    .count() / (double) group.signs().size();
                 if (!prog.completedSpyThreshold.getOrDefault(groupName, false)
-                    && percentCompleted >= group.getSpyThreshold()) {
+                    && percentCompleted >= group.spyThreshold()) {
 
                     prog.completedSpyThreshold.put(groupName, true);
                     notifySpy(player, group);
@@ -181,14 +181,14 @@ public class GazeListener implements Listener {
             }
                 
             // sign's progress logic
-            group.getSigns().keySet().forEach(id -> {
+            group.signs().keySet().forEach(id -> {
                 long current = prog.totalTicks
                     .getOrDefault(groupName, Map.of())
                     .getOrDefault(id, 0L);
 
                 if (current >= required && !signStates.getOrDefault(id, false)) {
                     signStates.put(id, true);
-                    runCommands(group.getSignCommands().getOrDefault(id, List.of()), player);
+                    runCommands(group.signCommands().getOrDefault(id, List.of()), player);
                     //player.sendMessage(String.format("§7[Debug] Completed sign %s!", id));
                     //player.sendMessage("[Debug]: Sign " + id + " has " + current + " ticks (req: " + required + "), done: " + signStates.getOrDefault(id, false));
                 }
@@ -197,12 +197,12 @@ public class GazeListener implements Listener {
                 //    id, current, required, signStates.getOrDefault(id, false)));
             });
             
-            boolean allDone = group.getSigns().keySet().stream()
+            boolean allDone = group.signs().keySet().stream()
                 .allMatch(id -> signStates.getOrDefault(id, false));
                     
             if (allDone && !prog.completedGroups.getOrDefault(groupName, false)) {
                 //player.sendMessage("§7[Debug] Completed group " + groupName);
-                runCommands(group.getOnComplete(), player);
+                runCommands(group.onComplete(), player);
                 prog.completedGroups.put(groupName, true);
             }
 
@@ -231,7 +231,7 @@ public class GazeListener implements Listener {
         for (var entry : gm.getGroups().entrySet()) {
             String groupName = entry.getKey();
             Group group = entry.getValue();
-            for (var signEntry : group.getSigns().entrySet()) {
+            for (var signEntry : group.signs().entrySet()) {
                 String signId = signEntry.getKey();
                 Location loc  = signEntry.getValue();
                 signs.put(locationKey(loc), new String[]{ groupName, signId });
@@ -273,7 +273,7 @@ public class GazeListener implements Listener {
         );
     }
     private void notifySpy(Player player, Group group) {
-        String message = "§6[vg] §7§o" + player.getName() + " has looked at " + group.getName() + ".";
+        String message = "§6[vg] §7§o" + player.getName() + " has looked at " + group.name() + ".";
         for (Player p : Bukkit.getOnlinePlayers()) {
             if (p.hasPermission("vardoger.spy")) {
                 p.sendMessage(message);

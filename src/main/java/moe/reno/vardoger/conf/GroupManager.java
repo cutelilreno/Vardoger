@@ -68,7 +68,7 @@ public class GroupManager {
         Group group = groups.get(groupName);
         if (group == null) throw new IllegalArgumentException("No such group: " + groupName);
         
-        group.getSigns().put(signId, location);
+        group.signs().put(signId, location);
 
         // Update file
         File gf = new File(plugin.getDataFolder(), "groups.yml");
