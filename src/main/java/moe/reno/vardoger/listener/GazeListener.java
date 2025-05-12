@@ -1,3 +1,8 @@
+/**
+ * MIT License
+ * Copyright (c) 2025 cutelilreno
+ * https://opensource.org/licenses/MIT
+ */
 package moe.reno.vardoger.listener;
 
 import moe.reno.vardoger.Vardoger;

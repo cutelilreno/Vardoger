@@ -1,31 +1,52 @@
 # Vardoger
+
+> **Prototype plugin!** — do your own checks before using in production!!
+
 A Spigot plugin for tracking player attention — unlock commands and progress by looking at signs.
 
-![Vardoger Demo](vardogerdemo.gif)
+Original concept by **lordpipe**.
 
-## Features
-- Detects when players are looking at signs
-- Tracks time spent focusing per sign
-- Defines groups of signs with goal durations
-- Executes commands when a group is completed
+![Vardoger demo](https://raw.githubusercontent.com/cutelilreno/LittleNebo/main/.github/assets/vardoger-demo.gif)
 
-## Use Cases
-- Rule walls that players must *actually* read
-- Educational worlds or quests
-- Unlockable achievements based on observation
+---
 
-## How it works
-Signs are defined in `groups.yml`. Each group has sign IDs and a required gaze duration.
-The plugin monitors player gaze using ray tracing and updates progress.
+## ✨ Features
 
-## Example groups.yml
+* Detects when players are looking at specific signs
+* Tracks time spent focusing per sign
+* Groups signs into collections with a required gaze duration
+* Executes commands when a group is completed
+
+---
+
+## 🎮 Use Cases
+
+* Gamified rule walls
+* Quests and educational content
+* Unlockable rewards or progression triggers
+
+---
+
+## ⚙ How It Works
+
+Signs are grouped in `groups.yml`, with:
+
+* A required duration (in ticks)
+* A list of signs with coordinates
+* A command list to run once the group is completed
+
+The plugin uses raytracing to detect what signs players are looking at and updates their progress accordingly.
+
+---
+
+## 📟 Example `groups.yml`
 
 ```yaml
 rules:
   requiredDuration: 5
   onComplete:
     - 'tellraw {player} {"text":"Thank you for reading the rules! \u2006\u2764","italic":true,"color":"yellow"}'
-    - tell {player} completed groups can also run multiple commands!
+    - tell {player} Completed groups can also run multiple commands!
   signs:
     rule1:
       world: world
@@ -38,3 +59,23 @@ rules:
       y: 112
       z: 85
 ```
+
+---
+
+## 🔧 Usage
+
+```shell
+/vg addgroup <group>
+/vg addsign <id> <group>
+```
+
+📝 *Signs won't track until the next reboot.*
+
+It's recommended to define groups  and signs in-game, then fine-tune `groups.yml` to add custom commands.
+
+---
+
+## 🧠 Credits
+
+Built by [cutelilreno](https://github.com/cutelilreno)
+Concept by [lordpipe](https://github.com/lordofpipes)
