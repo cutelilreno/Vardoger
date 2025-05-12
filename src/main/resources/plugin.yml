@@ -1,0 +1,18 @@
+name: Vardoger
+main: moe.reno.vardoger.Vardoger
+version: 1.0
+api-version: 1.19
+commands:
+  vg:
+    description: Show help menu
+    usage: /vg <reload|addgroup|addsign>
+permissions:
+  vardoger.reload:
+    description: Reload configuration
+    default: op
+  vardoger.addgroup:
+    description: Create groups
+    default: op
+  vardoger.addsign:
+    description: Register signs
+    default: op

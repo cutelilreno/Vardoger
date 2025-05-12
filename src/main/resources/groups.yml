@@ -1,0 +1,22 @@
+# requiredDuration in ticks
+# it is recommended to add groups and signs using the in-game commands
+# to avoid mistakes.
+# Designed with signs in mind, but theoretically can be any block
+# set in config.yml
+#
+# Example groups.yml
+#rules:
+#  requiredDuration: 5
+#  onComplete:
+#    - 'tellraw {player} {"text":"Thank you for reading the rules! \u2006\u2764","italic":true,"color":"yellow"}'
+#  signs:
+#    rules1:
+#      world: world
+#      x: -63
+#      y: 114
+#      z: 86
+
+rules:
+  requiredDuration: 5
+  onComplete: []
+  signs: {}

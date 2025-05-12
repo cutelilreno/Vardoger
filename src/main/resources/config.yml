@@ -1,0 +1,24 @@
+# Maximum number of blocks to raytrace from player
+# Values above 20 may have unexpected results
+view-distance: 12
+# Valid block types that can be registered for looking
+# These must be valid Bukkit Material names
+# See: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html
+valid-blocks:
+  - OAK_SIGN
+  - SPRUCE_SIGN
+  - BIRCH_SIGN
+  - JUNGLE_SIGN
+  - ACACIA_SIGN
+  - DARK_OAK_SIGN
+  - CRIMSON_SIGN
+  - WARPED_SIGN
+  - OAK_WALL_SIGN
+  - SPRUCE_WALL_SIGN
+  - BIRCH_WALL_SIGN
+  - JUNGLE_WALL_SIGN
+  - ACACIA_WALL_SIGN
+  - DARK_OAK_WALL_SIGN
+  - CRIMSON_WALL_SIGN
+  - WARPED_WALL_SIGN
+
