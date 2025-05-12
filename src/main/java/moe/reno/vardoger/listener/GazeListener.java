@@ -165,8 +165,21 @@ public class GazeListener implements Listener {
             long required = group.getRequiredDuration();
             
             Map<String, Boolean> signStates = prog.completedSigns
-                .computeIfAbsent(groupName, k -> new HashMap<>());
+                        .computeIfAbsent(groupName, k -> new HashMap<>());
 
+            if (group.getSpyThreshold() > 0.0) {
+                double percentCompleted = signStates.values().stream()
+                    .filter(Boolean::booleanValue)
+                    .count() / (double) group.getSigns().size();
+                if (!prog.completedSpyThreshold.getOrDefault(groupName, false)
+                    && percentCompleted >= group.getSpyThreshold()) {
+
+                    prog.completedSpyThreshold.put(groupName, true);
+                    notifySpy(player, group);
+                }
+            
+            }
+                
             // sign's progress logic
             group.getSigns().keySet().forEach(id -> {
                 long current = prog.totalTicks
@@ -258,6 +271,14 @@ public class GazeListener implements Listener {
                 cmd.replace("{player}", player.getName())
             )
         );
+    }
+    private void notifySpy(Player player, Group group) {
+        String message = "§6[vg] §7§o" + player.getName() + " has looked at " + group.getName() + ".";
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            if (p.hasPermission("vardoger.spy")) {
+                p.sendMessage(message);
+            }
+        }
     }
 
 }

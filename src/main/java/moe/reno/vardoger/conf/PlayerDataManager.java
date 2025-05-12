@@ -123,5 +123,6 @@ public class PlayerDataManager {
         public transient String currentSign;
         public transient long lookStart;
         public Map<String, Map<String, Boolean>> completedSigns = new HashMap<>();
+        public Map<String, Boolean> completedSpyThreshold = new HashMap<>();
     }
 }

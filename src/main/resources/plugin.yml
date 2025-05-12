@@ -16,3 +16,6 @@ permissions:
   vardoger.addsign:
     description: Register signs
     default: op
+  vardoger.spy:
+    description: Notify when a player has met the threshold for a group
+    default: op

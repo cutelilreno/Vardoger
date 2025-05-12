@@ -33,6 +33,7 @@ public class GroupManager {
             ConfigurationSection signsSec = sec.getConfigurationSection("signs");
             Map<String, Location> signs = new HashMap<>();
             Map<String, List<String>> signCommands = new HashMap<>();
+            double spyThreshold = sec.getDouble("spyThreshold", 0.0);
             for (String id : signsSec.getKeys(false)) {
                 ConfigurationSection s = signsSec.getConfigurationSection(id);
                 Location loc = new Location(
@@ -44,7 +45,7 @@ public class GroupManager {
                     signCommands.put(id, s.getStringList("onComplete"));
                 }
             }
-            groups.put(name, new Group(name, duration, commands, signs, signCommands));
+            groups.put(name, new Group(name, duration, commands, signs, signCommands, spyThreshold));
         }
     }
 
@@ -55,12 +56,12 @@ public class GroupManager {
         File gf = new File(plugin.getDataFolder(), "groups.yml");
         YamlConfiguration yc = YamlConfiguration.loadConfiguration(gf);
         yc.createSection(name);
-        yc.getConfigurationSection(name).set("requiredDuration", 40);
+        yc.getConfigurationSection(name).set("requiredDuration", 5);
         yc.getConfigurationSection(name).set("onComplete", Collections.emptyList());
         yc.getConfigurationSection(name).createSection("signs");
         yc.save(gf);
         
-        groups.put(name, new Group(name, 5, Collections.emptyList(), new HashMap<>(), new HashMap<>()));
+        groups.put(name, new Group(name, 5, Collections.emptyList(), new HashMap<>(), new HashMap<>(), 0.0));
     }
 
     public void addSign(String groupName, String signId, Location location) throws IOException {
@@ -96,6 +97,7 @@ public class GroupManager {
             ConfigurationSection signsSec = sec.getConfigurationSection("signs");
             Map<String, Location> signs = new HashMap<>();
             Map<String, List<String>> signCommands = new HashMap<>();
+            double spyThreshold = sec.getDouble("spyThreshold", 0.0);
             for (String id : signsSec.getKeys(false)) {
                 ConfigurationSection s = signsSec.getConfigurationSection(id);
                 Location loc = new Location(
@@ -107,7 +109,7 @@ public class GroupManager {
                     signCommands.put(id, s.getStringList("onComplete"));
                 }
             }
-            groups.put(name, new Group(name, duration, commands, signs, signCommands));
+            groups.put(name, new Group(name, duration, commands, signs, signCommands, spyThreshold));
         }
     }
 }
