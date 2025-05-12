@@ -6,7 +6,7 @@ A Spigot plugin for tracking player attention — unlock commands and progress b
 
 Original concept by **lordpipe**.
 
-![Vardoger demo](https://raw.githubusercontent.com/cutelilreno/LittleNebo/main/.github/assets/vardoger-demo.gif)
+![Vardoger demo](https://raw.githubusercontent.com/cutelilreno/Vardoger/main/.github/assets/vardoger-demo.gif)
 
 ---
 
