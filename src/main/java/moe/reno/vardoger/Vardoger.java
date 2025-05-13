@@ -7,6 +7,9 @@ package moe.reno.vardoger;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
+import dev.jorel.commandapi.CommandAPI;
+
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.HandlerList;
@@ -26,9 +29,11 @@ public class Vardoger extends JavaPlugin {
     private PlayerDataManager playerDataManager;
     private Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private GazeListener gazeListener;
+    private static Vardoger instance;
 
     @Override
     public void onEnable() {
+        instance = this;
 
         // Load config and groups
         saveDefaultConfig();
@@ -44,7 +49,8 @@ public class Vardoger extends JavaPlugin {
         playerDataManager = new PlayerDataManager(dataDir, gson);
 
         // Commands & listener
-        getCommand("vg").setExecutor(new VardogerCommand(this));
+        //getCommand("vg").setExecutor(new VardogerCommand(this));
+        CommandAPI.registerCommand(VardogerCommand.class);
         gazeListener = new GazeListener(this);
         Bukkit.getPluginManager().registerEvents(gazeListener, this);
 
@@ -71,6 +77,7 @@ public class Vardoger extends JavaPlugin {
     public GroupManager getGroupManager() { return groupManager; }
     public PlayerDataManager getPlayerDataManager() { return playerDataManager; }
     public void setGroupManager(GroupManager gm) { this.groupManager = gm; }
+    public static Vardoger getInstance() { return instance; }
 
     public GazeListener getGazeListener() { return gazeListener; }
     
