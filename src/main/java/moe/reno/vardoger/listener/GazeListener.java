@@ -22,8 +22,12 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.util.RayTraceResult;
 
+import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -35,10 +39,10 @@ public class GazeListener implements Listener {
     private final PlayerDataManager pdm;
     private final Vardoger plugin;
 
-    private final Map<String, String[]> signs = new HashMap<>();
-    private final Set<String> trackedChunks = new HashSet<>(); // world:x,z
-    private final Map<UUID, Boolean> inRange = new HashMap<>();
-    private final Map<UUID, Long> lastAccumulation = new HashMap<>();
+    private final Object2ObjectOpenHashMap<String, String[]> signs = new Object2ObjectOpenHashMap<>();
+    private final Set<String> trackedChunks = new ObjectOpenHashSet<>(); // world:x,z
+    private final Object2BooleanOpenHashMap<UUID> inRange = new Object2BooleanOpenHashMap<>();
+    private final Object2LongOpenHashMap<UUID> lastAccumulation = new Object2LongOpenHashMap<>();
 
     private static final int CHECK_INTERVAL_TICKS = 5;
 
@@ -120,8 +124,8 @@ public class GazeListener implements Listener {
         UUID uuid = e.getPlayer().getUniqueId();
         // save + clean up
         pdm.save(uuid);
-        lastAccumulation.remove(uuid);
-        inRange.remove(uuid);
+        lastAccumulation.removeLong(uuid);
+        inRange.removeBoolean(uuid);
     }
     
     private void startRayTraceTask() {
@@ -131,7 +135,7 @@ public class GazeListener implements Listener {
             
             // Check all online players
             for (Player player : Bukkit.getOnlinePlayers()) {
-                if (!inRange.getOrDefault(player.getUniqueId(), false)) continue;
+                if (!inRange.getBoolean(player.getUniqueId())) continue;
                 processPlayerGaze(player, now);
             }
         }, CHECK_INTERVAL_TICKS, CHECK_INTERVAL_TICKS);
@@ -251,7 +255,7 @@ public class GazeListener implements Listener {
         long deltaTicks = (now - lastAccum) / 50;
         if (deltaTicks > 0) {
             prog.totalTicks
-                .computeIfAbsent(prog.currentGroup, k -> new HashMap<>())
+                .computeIfAbsent(prog.currentGroup, k -> new Object2LongOpenHashMap<>())
                 .merge(prog.currentSign, deltaTicks, Long::sum);
         }
         lastAccumulation.put(uuid, now);
