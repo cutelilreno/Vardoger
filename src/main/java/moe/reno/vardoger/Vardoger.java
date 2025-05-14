@@ -57,9 +57,9 @@ public class Vardoger extends JavaPlugin {
         new BukkitRunnable() {
             @Override
             public void run() {
-                playerDataManager.saveAll();
+                playerDataManager.saveAllSync();
             }
-        }.runTaskTimer(this, 12000L, 12000L);
+        }.runTaskTimerAsynchronously(this, 12000L, 12000L); // Every 10 minutes
     }
 
     @Override
@@ -68,8 +68,8 @@ public class Vardoger extends JavaPlugin {
         Bukkit.getScheduler().cancelTasks(this);
         HandlerList.unregisterAll(this);
         
-        // Save final player data
-        playerDataManager.saveAll();
+        // Save final player data - bypass async
+        playerDataManager.saveAllSync();
     }
 
     public ConfigManager getConfigManager() { return config; }

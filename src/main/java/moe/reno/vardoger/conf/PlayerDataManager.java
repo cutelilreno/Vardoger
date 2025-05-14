@@ -5,6 +5,8 @@
  */
 package moe.reno.vardoger.conf;
 
+import moe.reno.vardoger.Vardoger;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.bukkit.Bukkit;
@@ -48,8 +50,11 @@ public class PlayerDataManager {
             }
         }
     }
-
     public void save(UUID uuid) {
+        Bukkit.getScheduler().runTaskAsynchronously(Vardoger.getInstance(), () -> saveSync(uuid));
+    }
+
+    private void saveSync(UUID uuid) {
         PlayerProgress p = cache.get(uuid);
         if (p == null) { return; } // No progress to save
 
@@ -85,6 +90,10 @@ public class PlayerDataManager {
     }
 
     public void saveAll() {
+        Bukkit.getScheduler().runTaskAsynchronously(Vardoger.getInstance(), this::saveAllSync);
+    }
+
+    public void saveAllSync() {
         synchronized(saveLock) {  // Global lock prevents concurrent saves
             for(UUID uuid : cache.keySet()) {
                 PlayerProgress p = cache.get(uuid);
