@@ -6,6 +6,7 @@
 package moe.reno.vardoger.listener;
 
 import moe.reno.vardoger.Vardoger;
+import moe.reno.vardoger.commands.CommandProcessor;
 import moe.reno.vardoger.conf.ConfigManager;
 import moe.reno.vardoger.conf.GroupManager;
 import moe.reno.vardoger.conf.PlayerDataManager;
@@ -245,13 +246,9 @@ public class GazeListener implements Listener {
     }
 
     private void runCommands(List<String> commands, Player player) {
-        commands.forEach(cmd ->
-            Bukkit.dispatchCommand(
-                Bukkit.getConsoleSender(),
-                cmd.replace("{player}", player.getName())
-            )
-        );
+        CommandProcessor.process(commands, player);
     }
+    
     private void notifySpy(Player player, Group group) {
         String message = "<gray>[<gold>vg</gold>] <em>" + player.getName() + " has looked at " + group.name() + ".";
         msg.sendToPermission("vardoger.spy", message);
