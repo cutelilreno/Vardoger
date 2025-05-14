@@ -49,7 +49,6 @@ public class Vardoger extends JavaPlugin {
         playerDataManager = new PlayerDataManager(dataDir, gson);
 
         // Commands & listener
-        //getCommand("vg").setExecutor(new VardogerCommand(this));
         CommandAPI.registerCommand(VardogerCommand.class);
         gazeListener = new GazeListener(this);
         Bukkit.getPluginManager().registerEvents(gazeListener, this);

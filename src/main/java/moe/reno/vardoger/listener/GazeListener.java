@@ -11,6 +11,7 @@ import moe.reno.vardoger.conf.GroupManager;
 import moe.reno.vardoger.conf.PlayerDataManager;
 import moe.reno.vardoger.conf.PlayerDataManager.PlayerProgress;
 import moe.reno.vardoger.data.Group;
+import moe.reno.vardoger.util.MessageUtil;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -38,6 +39,7 @@ public class GazeListener implements Listener {
     private final GroupManager gm;
     private final PlayerDataManager pdm;
     private final Vardoger plugin;
+    private final MessageUtil msg = new MessageUtil();
 
     private final Object2ObjectOpenHashMap<String, String[]> signs = new Object2ObjectOpenHashMap<>();
     private final Set<String> trackedChunks = new ObjectOpenHashSet<>(); // world:x,z
@@ -277,12 +279,8 @@ public class GazeListener implements Listener {
         );
     }
     private void notifySpy(Player player, Group group) {
-        String message = "§6[vg] §7§o" + player.getName() + " has looked at " + group.name() + ".";
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            if (p.hasPermission("vardoger.spy")) {
-                p.sendMessage(message);
-            }
-        }
+        String message = "<gray>[<gold>vg</gold>] <em>" + player.getName() + " has looked at " + group.name() + ".";
+        msg.sendToPermission("vardoger.spy", message);
     }
 
 }
