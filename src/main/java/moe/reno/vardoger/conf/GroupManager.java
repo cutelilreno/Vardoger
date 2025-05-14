@@ -34,7 +34,7 @@ public class GroupManager {
             Map<String, Location> signs = new HashMap<>();
             Map<String, List<String>> signCommands = new HashMap<>();
             double spyThreshold = sec.getDouble("spyThreshold", 0.0);
-            int cooldown = sec.getInt("cooldown", -1);
+            int cooldown = sec.getInt("signCooldown", -1);
             for (String id : signsSec.getKeys(false)) {
                 ConfigurationSection s = signsSec.getConfigurationSection(id);
                 Location loc = new Location(
@@ -99,7 +99,7 @@ public class GroupManager {
             Map<String, Location> signs = new HashMap<>();
             Map<String, List<String>> signCommands = new HashMap<>();
             double spyThreshold = sec.getDouble("spyThreshold", 0.0);
-            int cooldown = sec.getInt("cooldown", -1);
+            int cooldown = sec.getInt("signCooldown", -1);
             for (String id : signsSec.getKeys(false)) {
                 ConfigurationSection s = signsSec.getConfigurationSection(id);
                 Location loc = new Location(
