@@ -116,15 +116,17 @@ public class GazeListener implements Listener {
             }
         }
     }
-
-        // Initialize player-specific data or state
         inRange.put(uuid, nowInRange);
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent e) {
         UUID uuid = e.getPlayer().getUniqueId();
+        PlayerProgress prog = pdm.getProgress(uuid);
         // save + clean up
+        if (prog != null) {
+            prog.lastCompleted.clear();
+        }
         pdm.save(uuid);
         lastAccumulation.removeLong(uuid);
         inRange.removeBoolean(uuid);
@@ -168,40 +170,12 @@ public class GazeListener implements Listener {
             // check if completed the group
             String groupName = prog.currentGroup;
             Group group = gm.getGroup(groupName);
-            long required = group.requiredDuration();
             
             Map<String, Boolean> signStates = prog.completedSigns
                         .computeIfAbsent(groupName, k -> new HashMap<>());
 
-            if (group.spyThreshold() > 0.0) {
-                double percentCompleted = signStates.values().stream()
-                    .filter(Boolean::booleanValue)
-                    .count() / (double) group.signs().size();
-                if (!prog.completedSpyThreshold.getOrDefault(groupName, false)
-                    && percentCompleted >= group.spyThreshold()) {
-
-                    prog.completedSpyThreshold.put(groupName, true);
-                    notifySpy(player, group);
-                }
-            
-            }
-                
-            // sign's progress logic
-            group.signs().keySet().forEach(id -> {
-                long current = prog.totalTicks
-                    .getOrDefault(groupName, Map.of())
-                    .getOrDefault(id, 0L);
-
-                if (current >= required && !signStates.getOrDefault(id, false)) {
-                    signStates.put(id, true);
-                    runCommands(group.signCommands().getOrDefault(id, List.of()), player);
-                    //player.sendMessage(String.format("§7[Debug] Completed sign %s!", id));
-                    //player.sendMessage("[Debug]: Sign " + id + " has " + current + " ticks (req: " + required + "), done: " + signStates.getOrDefault(id, false));
-                }
-
-                //player.sendMessage(String.format("§7[Debug] Sign %s progress: %d/%d ticks (completed: %s)",
-                //    id, current, required, signStates.getOrDefault(id, false)));
-            });
+            handleSpyThreshold(player, prog, group, groupName);           
+            handleSignProgress(player, prog, group, groupName, now);
             
             boolean allDone = group.signs().keySet().stream()
                 .allMatch(id -> signStates.getOrDefault(id, false));
@@ -281,6 +255,49 @@ public class GazeListener implements Listener {
     private void notifySpy(Player player, Group group) {
         String message = "<gray>[<gold>vg</gold>] <em>" + player.getName() + " has looked at " + group.name() + ".";
         msg.sendToPermission("vardoger.spy", message);
+    }
+
+    private void handleSignProgress(Player player, PlayerProgress prog, Group group, String groupName, long now) {
+        Map<String, Boolean> signStates = prog.completedSigns.computeIfAbsent(groupName, k -> new HashMap<>());
+        Map<String, Long> totalTicks = prog.totalTicks.getOrDefault(groupName, new Object2LongOpenHashMap<>());
+        Map<String, Long> lastCompleted = prog.lastCompleted;
+
+        for (String id : group.signs().keySet()) {
+            long current = totalTicks.getOrDefault(id, 0L);
+            boolean completed = signStates.getOrDefault(id, false);
+            int cooldown = group.cooldown();
+
+            long last = lastCompleted.getOrDefault(id, 0L);
+
+            // If sign is completed and cooldown is enabled, check for rerun
+            if (completed && cooldown > -1) {
+                if (last == 0L || (now - last) >= cooldown * 1000L) {
+                    runCommands(group.signCommands().getOrDefault(id, List.of()), player);
+                    lastCompleted.put(id, now);
+                }
+            }
+
+            // If not completed, check if requirements are met to complete
+            if (!completed && current >= group.requiredDuration()) {
+                signStates.put(id, true);
+                runCommands(group.signCommands().getOrDefault(id, List.of()), player);
+                lastCompleted.put(id, now);
+            }
+        }
+    }
+
+    private void handleSpyThreshold(Player player, PlayerProgress prog, Group group, String groupName) {
+        if (group.spyThreshold() > 0.0) {
+            Map<String, Boolean> signStates = prog.completedSigns.computeIfAbsent(groupName, k -> new HashMap<>());
+            double percentCompleted = signStates.values().stream()
+                .filter(Boolean::booleanValue)
+                .count() / (double) group.signs().size();
+            if (!prog.completedSpyThreshold.getOrDefault(groupName, false)
+                && percentCompleted >= group.spyThreshold()) {
+                prog.completedSpyThreshold.put(groupName, true);
+                notifySpy(player, group);
+            }
+        }
     }
 
 }

@@ -122,7 +122,7 @@ public class PlayerDataManager {
         public transient String currentGroup;
         public transient String currentSign;
         public transient long lookStart;
-        public transient long lastCompleted;
+        public transient Map<String, Long> lastCompleted = new HashMap<>();
         public Map<String, Map<String, Boolean>> completedSigns = new HashMap<>();
         public Map<String, Boolean> completedSpyThreshold = new HashMap<>();
     }
