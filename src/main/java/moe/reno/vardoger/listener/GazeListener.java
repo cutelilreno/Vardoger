@@ -259,7 +259,8 @@ public class GazeListener implements Listener {
         Map<String, Long> totalTicks = prog.totalTicks.getOrDefault(groupName, new Object2LongOpenHashMap<>());
         Map<String, Long> lastCompleted = prog.lastCompleted;
 
-        for (String id : group.signs().keySet()) {
+        String id = prog.currentSign;
+if (id != null && group.signs().containsKey(id)) {
             long current = totalTicks.getOrDefault(id, 0L);
             boolean completed = signStates.getOrDefault(id, false);
             int cooldown = group.cooldown();
