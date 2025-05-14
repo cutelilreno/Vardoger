@@ -38,6 +38,8 @@ public class VardogerCommand {
         msg.sendMessage(sender, "---------------------");
     }
 
+    // TODO: Implement reload command
+    /*
     @Subcommand("reload")
     @Permission("vardoger.reload")
     public static void onReload(CommandSender sender) {
@@ -49,7 +51,7 @@ public class VardogerCommand {
             msg.error(sender, "Failed to reload group config.");
             e.printStackTrace();
         }
-    }
+    }*/
 
     @Subcommand("addgroup")
     @Permission("vardoger.addgroup")
