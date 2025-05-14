@@ -15,5 +15,6 @@ public record Group(
     List<String> onComplete,
     Map<String, Location> signs,
     Map<String, List<String>> signCommands,
-    double spyThreshold
+    double spyThreshold,
+    int cooldown
 ) {}
