@@ -7,3 +7,6 @@ permissions:
   vardoger.spy:
     description: Notify when a player has met the threshold for a group
     default: op
+  vardoger.admin:
+    description: Notify admin messages
+    default: op
