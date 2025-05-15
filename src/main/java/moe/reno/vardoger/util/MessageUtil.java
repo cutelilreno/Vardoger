@@ -1,3 +1,8 @@
+/**
+ * MIT License
+ * Copyright (c) 2025 cutelilreno
+ * https://opensource.org/licenses/MIT
+ */
 package moe.reno.vardoger.util;
 
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -95,7 +100,8 @@ public class MessageUtil {
      * @param miniMsg    The MiniMessage-formatted message to send
      */
     public void sendToPermission(String permission, String miniMsg) {
-        Component component = MiniMessage.miniMessage().deserialize(miniMsg);
+        if (miniMsg == null || miniMsg.isEmpty() || permission == null || permission.isEmpty()) return;
+        Component component = mm.deserialize(miniMsg);
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (player.hasPermission(permission)) {
                 player.sendMessage(component);
