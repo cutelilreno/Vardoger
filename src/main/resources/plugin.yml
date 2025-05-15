@@ -1,6 +1,6 @@
 name: Vardoger
 main: moe.reno.vardoger.Vardoger
-version: 1.0
+version: 1.0.1
 api-version: 1.19
 depend: [CommandAPI]
 permissions:

@@ -25,9 +25,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PlayerDataManager {
     private final File dataDir;
     private final Gson gson;
+    private final Map<UUID, Object> locks = new ConcurrentHashMap<>();
     private final Map<UUID, PlayerProgress> cache = new ConcurrentHashMap<>();
     private final Type progressType = new TypeToken<PlayerProgress>(){}.getType();
-    private final Object saveLock = new Object(); // Global lock for all save operations
 
     public PlayerDataManager(File dataDir, Gson gson) {
         this.dataDir = dataDir;
@@ -39,7 +39,7 @@ public class PlayerDataManager {
     }
 
     private PlayerProgress load(UUID uuid) {
-        synchronized(saveLock) {  // Prevent reads during writes
+        synchronized(getLock(uuid)) {  // Prevent reads during writes
             File f = new File(dataDir, uuid+".json");
             if (!f.exists()) return new PlayerProgress();
             try (FileReader r = new FileReader(f)) {
@@ -58,7 +58,7 @@ public class PlayerDataManager {
         PlayerProgress p = cache.get(uuid);
         if (p == null) { return; } // No progress to save
 
-        synchronized(saveLock) {  // Global lock for all file operations
+        synchronized(getLock(uuid)) {  // Global lock for all file operations
             File tempFile = new File(dataDir, uuid+".json.tmp");
             File targetFile = new File(dataDir, uuid+".json");
             
@@ -93,36 +93,23 @@ public class PlayerDataManager {
         Bukkit.getScheduler().runTaskAsynchronously(Vardoger.getInstance(), this::saveAllSync);
     }
 
-    public void saveAllSync() {
-        synchronized(saveLock) {  // Global lock prevents concurrent saves
-            for(UUID uuid : cache.keySet()) {
-                PlayerProgress p = cache.get(uuid);
-                
-                File tempFile = new File(dataDir, uuid+".json.tmp");
-                File targetFile = new File(dataDir, uuid+".json");
-                
-                try {
-                    if(tempFile.exists()) {
-                        tempFile.delete();
-                    }
+    /*
+     * This method may lock the main thread if called from it.
+     * Use with caution, especially if you have a lot of players.
+     */
+    public void unsafeSaveAll() {
+        saveAllSync();
+    }
 
-                    try (FileWriter w = new FileWriter(tempFile)) {
-                        gson.toJson(p, w);
-                        w.flush();
-                    }
-                    
-                    Files.move(tempFile.toPath(), targetFile.toPath(), 
-                        StandardCopyOption.ATOMIC_MOVE, 
-                        StandardCopyOption.REPLACE_EXISTING);
-                    
-                } catch(IOException ex) {
-                    if(tempFile.exists()) {
-                        tempFile.delete();
-                    }
-                    ex.printStackTrace();
-                }
+    private void saveAllSync() {
+       for(UUID uuid : cache.keySet()) {
+                saveSync(uuid);
             }
-        }
+        
+    }
+
+    private Object getLock(UUID uuid) {
+        return locks.computeIfAbsent(uuid, k -> new Object());
     }
 
     public static class PlayerProgress {
