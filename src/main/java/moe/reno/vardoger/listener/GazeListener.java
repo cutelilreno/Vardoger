@@ -22,6 +22,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.util.RayTraceResult;
 
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
@@ -108,6 +109,28 @@ public class GazeListener implements Listener {
         int z = player.getLocation().getBlockZ() >> 4;
         String world = player.getWorld().getName();
         
+        for (int dx = -1; dx <= 1 && !nowInRange; dx++) {
+        for (int dz = -1; dz <= 1; dz++) {
+            String chunkKey = world + ":" + (x + dx) + "," + (z + dz);
+            if (trackedChunks.contains(chunkKey)) {
+                nowInRange = true;
+                break;
+            }
+        }
+    }
+        inRange.put(uuid, nowInRange);
+    }
+
+    @EventHandler
+    public void onPlayerTeleport(PlayerTeleportEvent event) {
+        Player player = event.getPlayer();
+        Location to = event.getTo();
+        UUID uuid = player.getUniqueId();
+        boolean nowInRange = false;
+        int x = to.getBlockX() >> 4;
+        int z = to.getBlockZ() >> 4;
+        String world = to.getWorld().getName();
+
         for (int dx = -1; dx <= 1 && !nowInRange; dx++) {
         for (int dz = -1; dz <= 1; dz++) {
             String chunkKey = world + ":" + (x + dx) + "," + (z + dz);
